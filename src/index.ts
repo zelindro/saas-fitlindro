@@ -2,7 +2,7 @@ import "dotenv/config";
 
 import fastifyCors from "@fastify/cors";
 import fastifySwagger from "@fastify/swagger";
-import fastifySwaggerUI from "@fastify/swagger-ui";
+import fastifyApiReference from "@scalar/fastify-api-reference";
 import Fastify from "fastify";
 import {
   jsonSchemaTransform,
@@ -10,7 +10,6 @@ import {
   validatorCompiler,
   ZodTypeProvider,
 } from "fastify-type-provider-zod";
-import { z } from "zod";
 
 import { auth } from "./lib/auth.js";
 const app = Fastify({
@@ -37,8 +36,22 @@ await app.register(fastifySwagger, {
   transform: jsonSchemaTransform,
 });
 
-await app.register(fastifySwaggerUI, {
+await app.register(fastifyApiReference, {
   routePrefix: "/docs",
+  configuration: {
+    sources: [
+      {
+        title: "Fitlindro API",
+        slug: "fitlindro-api",
+        url: "/swagger.json",
+      },
+      {
+        title: "Auth API",
+        slug: "auth-api",
+        url: "/api/auth/open-ai/generate-schema",
+      },
+    ],
+  },
 });
 
 await app.register(fastifyCors, {
@@ -48,20 +61,12 @@ await app.register(fastifyCors, {
 
 app.withTypeProvider<ZodTypeProvider>().route({
   method: "GET",
-  url: "/",
+  url: "/swagger.json",
   schema: {
-    description: "Print de um Hello World",
-    tags: ["Hello World"],
-    response: {
-      200: z.object({
-        message: z.string(),
-      }),
-    },
+    hide: true,
   },
-  handler: () => {
-    return {
-      message: "Hello World",
-    };
+  handler: async () => {
+    return app.swagger();
   },
 });
 
