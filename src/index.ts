@@ -48,7 +48,7 @@ await app.register(fastifyApiReference, {
       {
         title: "Auth API",
         slug: "auth-api",
-        url: "/api/auth/open-ai/generate-schema",
+        url: "/api/auth/open-api/generate-schema",
       },
     ],
   },
