@@ -25,8 +25,8 @@ app.setSerializerCompiler(serializerCompiler);
 await app.register(fastifySwagger, {
   openapi: {
     info: {
-      title: "Fitlindro-API",
-      description: "API para o bootcamp de treinos do FSC",
+      title: "Fitlindro API",
+      description: "API para um projeto de organizador de treinos",
       version: "1.0.0",
     },
     servers: [
@@ -49,8 +49,8 @@ await app.register(fastifyApiReference, {
   configuration: {
     sources: [
       {
-        title: "Bootcamp Treinos API",
-        slug: "bootcamp-treinos-api",
+        title: "Fitlindro API",
+        slug: "fitlindro-api",
         url: "/swagger.json",
       },
       {
