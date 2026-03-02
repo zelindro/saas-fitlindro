@@ -123,4 +123,5 @@ model Verification {
   @@map("verification")
 }
 
-//Sempre que o schema for alterado rodar 'npx prisma db push'
+//Sempre que o schema for alterado rodar 'npx prisma db push' 
+//E depois rodar 'npx prisma generate'

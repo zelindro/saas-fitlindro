@@ -2,6 +2,7 @@ import "dotenv/config";
 
 import fastifyCors from "@fastify/cors";
 import fastifySwagger from "@fastify/swagger";
+import fastifySwaggerUI from "@fastify/swagger-ui";
 import fastifyApiReference from "@scalar/fastify-api-reference";
 import Fastify from "fastify";
 import {
@@ -10,8 +11,10 @@ import {
   validatorCompiler,
   ZodTypeProvider,
 } from "fastify-type-provider-zod";
+import z from "zod";
 
 import { auth } from "./lib/auth.js";
+
 const app = Fastify({
   logger: true,
 });
@@ -22,8 +25,8 @@ app.setSerializerCompiler(serializerCompiler);
 await app.register(fastifySwagger, {
   openapi: {
     info: {
-      title: "Fitlindro API",
-      description: "API para um projeto de organizador de treinos",
+      title: "Fitlindro-API",
+      description: "API para o bootcamp de treinos do FSC",
       version: "1.0.0",
     },
     servers: [
@@ -36,13 +39,18 @@ await app.register(fastifySwagger, {
   transform: jsonSchemaTransform,
 });
 
+await app.register(fastifyCors, {
+  origin: ["http://localhost:3000"],
+  credentials: true,
+});
+
 await app.register(fastifyApiReference, {
   routePrefix: "/docs",
   configuration: {
     sources: [
       {
-        title: "Fitlindro API",
-        slug: "fitlindro-api",
+        title: "Bootcamp Treinos API",
+        slug: "bootcamp-treinos-api",
         url: "/swagger.json",
       },
       {
@@ -54,11 +62,6 @@ await app.register(fastifyApiReference, {
   },
 });
 
-await app.register(fastifyCors, {
-  origin: "http://localhost:3000",
-  credentials: true,
-});
-
 app.withTypeProvider<ZodTypeProvider>().route({
   method: "GET",
   url: "/swagger.json",
@@ -67,6 +70,25 @@ app.withTypeProvider<ZodTypeProvider>().route({
   },
   handler: async () => {
     return app.swagger();
+  },
+});
+
+app.withTypeProvider<ZodTypeProvider>().route({
+  method: "GET",
+  url: "/",
+  schema: {
+    description: "Hello world",
+    tags: ["Hello World"],
+    response: {
+      200: z.object({
+        message: z.string(),
+      }),
+    },
+  },
+  handler: () => {
+    return {
+      message: "Hello World",
+    };
   },
 });
 
