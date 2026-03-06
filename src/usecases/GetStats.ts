@@ -44,7 +44,9 @@ export class GetStats {
     const workoutPlan = await prisma.workoutPlan.findFirst({
       where: { userId: dto.userId, isActive: true },
       include: {
-        workoutDays: true,
+        workoutDays: {
+          include: { sessions: true },
+        },
       },
     });
 
@@ -69,7 +71,7 @@ export class GetStats {
       { workoutDayCompleted: boolean; workoutDayStarted: boolean }
     > = {};
 
-    for (const session of sessions) {
+    sessions.forEach((session) => {
       const dateKey = dayjs.utc(session.startedAt).format("YYYY-MM-DD");
 
       if (!consistencyByDay[dateKey]) {
@@ -84,7 +86,7 @@ export class GetStats {
       if (session.completedAt !== null) {
         consistencyByDay[dateKey].workoutDayCompleted = true;
       }
-    }
+    });
 
     const completedSessions = sessions.filter((s) => s.completedAt !== null);
     const completedWorkoutsCount = completedSessions.length;
@@ -101,7 +103,7 @@ export class GetStats {
     const workoutStreak = await this.calculateStreak(
       workoutPlan.id,
       workoutPlan.workoutDays,
-      dayjs.utc(dto.to),
+      toDate,
     );
 
     return {
@@ -123,7 +125,7 @@ export class GetStats {
   ): Promise<number> {
     const planWeekDays = new Set(workoutDays.map((d) => d.weekDay));
     const restWeekDays = new Set(
-      workoutDays.filter((d) => d.isRest).map((d) => d.weekDay),
+      workoutDays.filter((day) => day.isRest).map((day) => day.weekDay),
     );
 
     const allSessions = await prisma.workoutSession.findMany({
@@ -169,8 +171,6 @@ export class GetStats {
       if (streakStarted) {
         break;
       }
-
-      day = day.subtract(1, "day");
     }
 
     return streak;
