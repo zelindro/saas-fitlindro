@@ -29,7 +29,7 @@ interface OutputDto {
     id: string;
     name: string;
     isRest: boolean;
-    weekDay: (typeof WeekDay)[keyof typeof WeekDay];
+    weekDay: WeekDay;
     estimatedDurationInSeconds: number;
     coverImageUrl?: string;
     exercisesCount: number;

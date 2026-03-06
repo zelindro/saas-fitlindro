@@ -12,7 +12,7 @@ interface OutputDto {
   name: string;
   workoutDays: Array<{
     id: string;
-    weekDay: (typeof WeekDay)[keyof typeof WeekDay];
+    weekDay: WeekDay;
     name: string;
     isRest: boolean;
     coverImageUrl?: string;
