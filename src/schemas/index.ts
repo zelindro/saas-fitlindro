@@ -158,3 +158,27 @@ export const HomeDataSchema = z.object({
     }),
   ),
 });
+
+export const UserTrainDataSchema = z.object({
+  userId: z.string(),
+  userName: z.string(),
+  weightInGrams: z.number(),
+  heightInCentimeters: z.number(),
+  age: z.number(),
+  bodyFatPercentage: z.number().min(0).max(100),
+});
+
+export const UpsertUserTrainDataSchema = z.object({
+  userId: z.string(),
+  weightInGrams: z.number(),
+  heightInCentimeters: z.number(),
+  age: z.number(),
+  bodyFatPercentage: z.number().min(0).max(100),
+});
+
+export const UpsertUserTrainDataBodySchema = z.object({
+  weightInGrams: z.number().positive(),
+  heightInCentimeters: z.number().positive(),
+  age: z.number().positive().int(),
+  bodyFatPercentage: z.number().min(0).max(100),
+});
